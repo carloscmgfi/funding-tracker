@@ -1,4 +1,5 @@
 name: daily-ingest
+
 on:
   schedule:
     - cron: '0 7 * * *'  # 07:00 UTC cada día
@@ -8,35 +9,34 @@ jobs:
   run-etl:
     runs-on: ubuntu-latest
     steps:
+      # 1️⃣ Clonar el repositorio
       - uses: actions/checkout@v4
 
+      # 2️⃣ Configurar Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
+      # 3️⃣ Instalar dependencias
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r proteinas-tracker/requirements.txt
 
+      # 4️⃣ Preparar credenciales de Google
       - name: Prepare Google credentials
         env:
           B64_KEY: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_B64 }}
         run: |
           echo "$B64_KEY" | base64 --decode > /tmp/service-account.json
-          echo "Created /tmp/service-account.json"
-          echo "BQ dataset: ${{ secrets.BQ_DATASET }} TABLE: ${{ secrets.BQ_TABLE }}"
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account.json
 
-      - name: Run ETL scripts
+      # 5️⃣ Ejecutar solo el script de Madrid
+      - name: Run Madrid ETL
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /tmp/service-account.json
           BQ_DATASET: ${{ secrets.BQ_DATASET }}
           BQ_TABLE: ${{ secrets.BQ_TABLE }}
         run: |
-          python proteinas-tracker/etl/a_e_i/fetch_aei.py
-          python proteinas-tracker/etl/cdti/fetch_cdti.py
           python proteinas-tracker/etl/ccaa/madrid.py
-
-        
