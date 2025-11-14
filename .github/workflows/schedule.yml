@@ -38,9 +38,4 @@ jobs:
           python etl/a_e_i/fetch_aei.py
           python etl/cdti/fetch_cdti.py
           python etl/ccaa/madrid.py
-          python etl/ccaa/cataluna.py
-          python etl/ccaa/galicia.py
-          python etl/ccaa/pais_vasco.py
-          python etl/ccaa/navarra.py
-          python etl/ccaa/comunidad_valenciana.py
-          python etl/ccaa/andalucia.py
+        
